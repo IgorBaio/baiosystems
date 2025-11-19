@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Adsense from "@/components/Adsense";
 
 type BasePreset = {
@@ -22,6 +22,16 @@ type CustomExpense = {
   name: string;
   amount: number;
 };
+
+type PersistedState = {
+  monthlyIncome?: number;
+  savingsGoal?: number;
+  fixedExpenses?: Category[];
+  variableExpenses?: Category[];
+  customExpenses?: CustomExpense[];
+};
+
+const STORAGE_KEY = "controle-financeiro-state-v1";
 
 const FIXED_PRESETS: BasePreset[] = [
   {
@@ -112,6 +122,42 @@ const buildCategories = (presets: BasePreset[]): Category[] =>
 const getSafeAmount = (value: number) =>
   Number.isFinite(value) && value >= 0 ? value : 0;
 
+const mergeCategoryState = (presets: BasePreset[], stored?: Category[]) => {
+  const base = buildCategories(presets);
+  if (!Array.isArray(stored)) return base;
+  const storedMap = new Map(
+    stored
+      .filter(
+        (item): item is Category =>
+          Boolean(item) && typeof item.id === "string" && Number.isFinite(Number(item.amount)),
+      )
+      .map((item) => [item.id, getSafeAmount(Number(item.amount))]),
+  );
+  return base.map((category) => ({
+    ...category,
+    amount: storedMap.get(category.id) ?? category.amount,
+  }));
+};
+
+const sanitizeCustomExpenses = (entries?: CustomExpense[]) => {
+  if (!Array.isArray(entries)) return [];
+  return entries
+    .filter(
+      (entry): entry is CustomExpense =>
+        Boolean(entry) &&
+        typeof entry.id === "string" &&
+        typeof entry.name === "string" &&
+        entry.name.trim().length > 0 &&
+        Number.isFinite(Number(entry.amount)),
+    )
+    .map((entry) => ({
+      id: entry.id,
+      name: entry.name.trim(),
+      amount: getSafeAmount(Number(entry.amount)),
+    }))
+    .filter((entry) => entry.amount > 0);
+};
+
 export default function ControleFinanceiroPage() {
   const [monthlyIncome, setMonthlyIncome] = useState(4500);
   const [savingsGoal, setSavingsGoal] = useState(500);
@@ -124,6 +170,7 @@ export default function ControleFinanceiroPage() {
   const [customExpenses, setCustomExpenses] = useState<CustomExpense[]>([]);
   const [customName, setCustomName] = useState("");
   const [customAmount, setCustomAmount] = useState("");
+  const [hasLoadedPersistedState, setHasLoadedPersistedState] = useState(false);
 
   const totalFixed = useMemo(
     () => fixedExpenses.reduce((total, item) => total + item.amount, 0),
@@ -177,6 +224,57 @@ export default function ControleFinanceiroPage() {
   const removeCustomExpense = (id: string) => {
     setCustomExpenses((prev) => prev.filter((expense) => expense.id !== id));
   };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const persisted: PersistedState = JSON.parse(raw);
+      if (typeof persisted.monthlyIncome === "number") {
+        setMonthlyIncome(getSafeAmount(persisted.monthlyIncome));
+      }
+      if (typeof persisted.savingsGoal === "number") {
+        setSavingsGoal(getSafeAmount(persisted.savingsGoal));
+      }
+      if (persisted.fixedExpenses) {
+        setFixedExpenses(mergeCategoryState(FIXED_PRESETS, persisted.fixedExpenses));
+      }
+      if (persisted.variableExpenses) {
+        setVariableExpenses(mergeCategoryState(VARIABLE_PRESETS, persisted.variableExpenses));
+      }
+      if (persisted.customExpenses) {
+        setCustomExpenses(sanitizeCustomExpenses(persisted.customExpenses));
+      }
+    } catch {
+      // silencioso
+    } finally {
+      setHasLoadedPersistedState(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedPersistedState || typeof window === "undefined") return;
+    const payload: PersistedState = {
+      monthlyIncome,
+      savingsGoal,
+      fixedExpenses,
+      variableExpenses,
+      customExpenses,
+    };
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch {
+      // silencioso
+    }
+  }, [
+    hasLoadedPersistedState,
+    monthlyIncome,
+    savingsGoal,
+    fixedExpenses,
+    variableExpenses,
+    customExpenses,
+  ]);
 
   const insights: { title: string; content: string }[] = [];
   if (totalFixed > recommendedNeeds) {
