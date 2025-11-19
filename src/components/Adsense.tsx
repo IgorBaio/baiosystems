@@ -19,9 +19,8 @@ export default function Adsense({ slot, className }: Props) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
+    } catch {
       // silencioso
     }
   }, []);

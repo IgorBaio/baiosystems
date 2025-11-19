@@ -18,13 +18,12 @@ export default function RootLayout({
     <html lang="pt-BR" className="dark">
       <head>
         {/* AdSense GLOBAL – troque pelo seu client */}
-        {/* <Script
+        <Script
           id="adsense-global"
-          async
           strategy="afterInteractive"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-SEU_CLIENT_ID"
+          async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9674908168811233"
           crossOrigin="anonymous"
-        /> */}
+        />
       </head>
       <body className="bg-neutral-950 text-neutral-50 min-h-screen flex flex-col">
         <Navbar />
