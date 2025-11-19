@@ -5,12 +5,17 @@ FROM base AS deps
 COPY package*.json ./
 RUN npm ci
 
-FROM deps AS build
+FROM base AS build
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-FROM nginx:1.27-alpine AS runtime
-
-COPY --from=build /app/dist /usr/share/nginx/html
+FROM base AS runtime
+ENV NODE_ENV=production
+COPY package*.json ./
+COPY --from=build /app/package-lock.json ./package-lock.json
+RUN npm ci --omit=dev
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public ./public
 EXPOSE 3000
-CMD ["nginx","-g","daemon off;"]
+CMD ["npm","run","start"]
