@@ -313,7 +313,7 @@ export default function ControleFinanceiroPage() {
         </p>
       </header>
 
-      <Adsense slot="SEU_AD_SLOT_FINANCEIRO" className="mb-4" />
+      <Adsense slot="2619913181" className="mb-4" />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <section className="space-y-6 lg:col-span-2">
