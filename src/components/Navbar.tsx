@@ -12,7 +12,7 @@ const links = [
 export default function Navbar() {
   const pathname = usePathname();
   return (
-    <header className="border-b border-neutral-800 bg-neutral-950/80 backdrop-blur">
+    <header className="border-b border-neutral-800 bg-neutral-950/80 backdrop-blur print-hidden">
       <nav className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="font-semibold text-lg">
           <span className="text-emerald-400">Baio</span>Systems

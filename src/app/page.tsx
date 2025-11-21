@@ -39,6 +39,11 @@ const heroButtons = {
   contact: { pt: "Fale comigo", en: "Contact me" },
 };
 
+const pdfButton = {
+  pt: "Exportar curriculo (PDF)",
+  en: "Export resume (PDF)",
+};
+
 const sectionTitles = {
   experience: { pt: "Experiencias recentes", en: "Recent experience" },
   education: { pt: "Formacao academica", en: "Education" },
@@ -207,8 +212,8 @@ export default function HomePage() {
   const [language, setLanguage] = useState<Language>("pt");
 
   return (
-    <div className="space-y-10">
-      <div className="flex justify-end">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-end gap-3 print-hidden">
         <div className="inline-flex rounded-full border border-neutral-800 bg-neutral-950/60 p-1 text-xs">
           {(["pt", "en"] as Language[]).map((option) => (
             <button
@@ -224,9 +229,21 @@ export default function HomePage() {
             </button>
           ))}
         </div>
+        <button
+          type="button"
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              window.print();
+            }
+          }}
+          className="rounded-md border border-emerald-500 px-4 py-2 text-xs font-semibold text-emerald-400 transition hover:bg-emerald-500/10"
+        >
+          {pdfButton[language]}
+        </button>
       </div>
 
-      <section className="space-y-5 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-6 shadow-lg shadow-black/40">
+      <div id="resume-print-area" className="space-y-10">
+        <section className="space-y-5 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-6 shadow-lg shadow-black/40">
         <div className="space-y-3">
           <p className="text-xs uppercase tracking-[0.35em] text-emerald-400">
             Igor Baio Soares
@@ -246,7 +263,7 @@ export default function HomePage() {
           </p>
         </div>
         <p className="text-sm text-neutral-300 sm:text-base">{heroObjective[language]}</p>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3 print-hidden">
           <Link
             href="/apps"
             className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-semibold text-neutral-950 transition hover:bg-emerald-400"
@@ -297,7 +314,7 @@ export default function HomePage() {
             <SectionTitle>{sectionTitles.education[language]}</SectionTitle>
             <div className="mt-4 space-y-3 text-sm text-neutral-300">
               {education.map((item) => (
-                <div key={item.school+item.course[language === "pt" ? "pt" : "en"]}>
+                 <div key={item.school+item.course[language === "pt" ? "pt" : "en"]}>
                   <p className="font-medium text-neutral-100">{item.school}</p>
                   <p>{item.course[language]}</p>
                   <p className="text-xs text-neutral-500">{item.period[language]}</p>
@@ -328,7 +345,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="space-y-3">
+        <section className="space-y-3 print-hidden">
         <SectionTitle>{sectionTitles.apps[language]}</SectionTitle>
         <p className="text-sm text-neutral-300">{appsDescription[language]}</p>
         <div className="grid gap-4 text-sm sm:grid-cols-2">
@@ -342,7 +359,8 @@ export default function HomePage() {
             />
           ))}
         </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }

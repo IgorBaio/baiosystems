@@ -32,3 +32,21 @@ body {
 body {
   @apply antialiased;
 }
+
+@media print {
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+  #resume-print-area {
+    background: #ffffff;
+    color: #000000;
+    padding: 1.5rem;
+  }
+  #resume-print-area * {
+    color: #000000 !important;
+  }
+  .print-hidden {
+    display: none !important;
+  }
+}

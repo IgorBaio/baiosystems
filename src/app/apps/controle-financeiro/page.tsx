@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Adsense from "@/components/Adsense";
 
 type BasePreset = {
   id: string;
