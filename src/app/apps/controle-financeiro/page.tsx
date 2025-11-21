@@ -341,18 +341,28 @@ export default function ControleFinanceiroPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-3">
-        <p className="text-sm uppercase tracking-[0.3em] text-emerald-400">
+        {/* <p className="text-sm uppercase tracking-[0.3em] text-emerald-400">
           Inspirado na CalculadoraGastosHtml
-        </p>
+        </p> */}
         <h1 className="text-3xl font-semibold">Controle Financeiro</h1>
         <p className="text-sm leading-relaxed text-neutral-300">
-          Evolucao em React/Next da Calculadora de Gastos: cadastre despesas fixas, variaveis e
+          Cadastre despesas fixas, variaveis e
           extras, acompanhe o consumo da renda e receba alertas automaticos para manter a regra
           50/30/20 equilibrada.
         </p>
       </header>
 
-      <Adsense slot="2619913181" className="mb-4" />
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9674908168811233"
+        crossOrigin="anonymous"></script>
+      <ins className="adsbygoogle"
+        style={{ "display": "block" }}
+        data-ad-client="ca-pub-9674908168811233"
+        data-ad-slot="2619913181"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({ });
+      </script>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <section className="space-y-6 lg:col-span-2">
