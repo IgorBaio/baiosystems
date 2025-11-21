@@ -158,6 +158,20 @@ const sanitizeCustomExpenses = (entries?: CustomExpense[]) => {
     .filter((entry) => entry.amount > 0);
 };
 
+const sanitizeNumericInputValue = (value: string) => value.replace(/[^\d.,]/g, "");
+
+const parseSanitizedInput = (value: string) => {
+  if (!value) return 0;
+  const normalized = value.replace(",", ".");
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const formatNumberForInput = (value: number) => {
+  if (!Number.isFinite(value)) return "";
+  return value.toString().replace(".", ",");
+};
+
 export default function ControleFinanceiroPage() {
   const [monthlyIncome, setMonthlyIncome] = useState(4500);
   const [savingsGoal, setSavingsGoal] = useState(500);
@@ -171,6 +185,7 @@ export default function ControleFinanceiroPage() {
   const [customName, setCustomName] = useState("");
   const [customAmount, setCustomAmount] = useState("");
   const [hasLoadedPersistedState, setHasLoadedPersistedState] = useState(false);
+  const [inputDrafts, setInputDrafts] = useState<Record<string, string>>({});
 
   const totalFixed = useMemo(
     () => fixedExpenses.reduce((total, item) => total + item.amount, 0),
@@ -223,6 +238,30 @@ export default function ControleFinanceiroPage() {
 
   const removeCustomExpense = (id: string) => {
     setCustomExpenses((prev) => prev.filter((expense) => expense.id !== id));
+  };
+
+  const handleMaskedInputChange = (
+    key: string,
+    rawValue: string,
+    onValue: (value: number) => void,
+  ) => {
+    const sanitized = sanitizeNumericInputValue(rawValue);
+    setInputDrafts((prev) => ({ ...prev, [key]: sanitized }));
+    const parsed = parseSanitizedInput(sanitized);
+    onValue(getSafeAmount(parsed));
+  };
+
+  const handleMaskedInputBlur = (key: string, currentValue: number) => {
+    setInputDrafts((prev) => {
+      if (!(key in prev)) return prev;
+      const formatted = formatNumberForInput(currentValue);
+      if (formatted === prev[key]) {
+        const rest = { ...prev };
+        delete rest[key];
+        return rest;
+      }
+      return { ...prev, [key]: formatted };
+    });
   };
 
   useEffect(() => {
@@ -323,22 +362,28 @@ export default function ControleFinanceiroPage() {
               <label className="space-y-2 text-sm text-neutral-300">
                 <span>Renda mensal</span>
                 <input
-                  type="number"
-                  min={0}
-                  step="100"
-                  value={monthlyIncome}
-                  onChange={(event) => setMonthlyIncome(getSafeAmount(event.target.valueAsNumber))}
+                  type="text"
+                  inputMode="decimal"
+                  pattern="[0-9,.]*"
+                  value={inputDrafts["monthly-income"] ?? formatNumberForInput(monthlyIncome)}
+                  onChange={(event) =>
+                    handleMaskedInputChange("monthly-income", event.target.value, setMonthlyIncome)
+                  }
+                  onBlur={() => handleMaskedInputBlur("monthly-income", monthlyIncome)}
                   className="w-full rounded-lg border border-neutral-800 bg-neutral-900/70 px-3 py-2 text-base"
                 />
               </label>
               <label className="space-y-2 text-sm text-neutral-300">
                 <span>Meta de reserva / investimentos</span>
                 <input
-                  type="number"
-                  min={0}
-                  step="50"
-                  value={savingsGoal}
-                  onChange={(event) => setSavingsGoal(getSafeAmount(event.target.valueAsNumber))}
+                  type="text"
+                  inputMode="decimal"
+                  pattern="[0-9,.]*"
+                  value={inputDrafts["savings-goal"] ?? formatNumberForInput(savingsGoal)}
+                  onChange={(event) =>
+                    handleMaskedInputChange("savings-goal", event.target.value, setSavingsGoal)
+                  }
+                  onBlur={() => handleMaskedInputBlur("savings-goal", savingsGoal)}
                   className="w-full rounded-lg border border-neutral-800 bg-neutral-900/70 px-3 py-2 text-base"
                 />
               </label>
@@ -374,17 +419,18 @@ export default function ControleFinanceiroPage() {
                       </td>
                       <td className="py-3 text-right">
                         <input
-                          type="number"
-                          min="0"
-                          step="10"
-                          value={item.amount}
+                          type="text"
+                          inputMode="decimal"
+                          pattern="[0-9,.]*"
+                          value={
+                            inputDrafts[`fixed-${item.id}`] ?? formatNumberForInput(item.amount)
+                          }
                           onChange={(event) =>
-                            updateCategoryValue(
-                              setFixedExpenses,
-                              item.id,
-                              getSafeAmount(event.target.valueAsNumber),
+                            handleMaskedInputChange(`fixed-${item.id}`, event.target.value, (value) =>
+                              updateCategoryValue(setFixedExpenses, item.id, value),
                             )
                           }
+                          onBlur={() => handleMaskedInputBlur(`fixed-${item.id}`, item.amount)}
                           className="w-32 rounded-lg border border-neutral-800 bg-neutral-900/70 px-3 py-2 text-right"
                         />
                       </td>
@@ -424,17 +470,20 @@ export default function ControleFinanceiroPage() {
                       </td>
                       <td className="py-3 text-right">
                         <input
-                          type="number"
-                          min="0"
-                          step="10"
-                          value={item.amount}
+                          type="text"
+                          inputMode="decimal"
+                          pattern="[0-9,.]*"
+                          value={
+                            inputDrafts[`variable-${item.id}`] ?? formatNumberForInput(item.amount)
+                          }
                           onChange={(event) =>
-                            updateCategoryValue(
-                              setVariableExpenses,
-                              item.id,
-                              getSafeAmount(event.target.valueAsNumber),
+                            handleMaskedInputChange(
+                              `variable-${item.id}`,
+                              event.target.value,
+                              (value) => updateCategoryValue(setVariableExpenses, item.id, value),
                             )
                           }
+                          onBlur={() => handleMaskedInputBlur(`variable-${item.id}`, item.amount)}
                           className="w-32 rounded-lg border border-neutral-800 bg-neutral-900/70 px-3 py-2 text-right"
                         />
                       </td>
@@ -460,12 +509,14 @@ export default function ControleFinanceiroPage() {
                 className="rounded-lg border border-neutral-800 bg-neutral-900/70 px-3 py-2 text-sm"
               />
               <input
-                type="number"
-                min="0"
-                step="5"
+                type="text"
+                inputMode="decimal"
+                pattern="[0-9,.]*"
                 placeholder="Valor"
                 value={customAmount}
-                onChange={(event) => setCustomAmount(event.target.value)}
+                onChange={(event) =>
+                  setCustomAmount(sanitizeNumericInputValue(event.target.value))
+                }
                 className="rounded-lg border border-neutral-800 bg-neutral-900/70 px-3 py-2 text-sm"
               />
               <button
