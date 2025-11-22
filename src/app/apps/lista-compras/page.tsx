@@ -64,7 +64,17 @@ export default function ListaComprasPage() {
         </p>
       </header>
 
-      <Adsense slot="SEU_AD_SLOT_LISTA" className="mb-4" />
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9674908168811233"
+        crossOrigin="anonymous"></script>
+      <ins className="adsbygoogle"
+        style={{ "display": "block" }}
+        data-ad-client="ca-pub-9674908168811233"
+        data-ad-slot="2619913181"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({ });
+      </script>
 
       <section className="border border-neutral-800 rounded-lg p-4 bg-neutral-950/60 space-y-4 text-sm">
         <div className="flex gap-2">
