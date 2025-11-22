@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Adsense from "@/components/Adsense";
 
 type Item = {
@@ -9,9 +9,30 @@ type Item = {
   done: boolean;
 };
 
+const STORAGE_KEY = "lista-compras-cache";
+
 export default function ListaComprasPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [input, setInput] = useState("");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const saved = window.localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      const parsed = JSON.parse(saved) as Item[];
+      if (Array.isArray(parsed)) {
+        queueMicrotask(() => setItems(parsed));
+      }
+    } catch {
+      // ignore cache errors
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  }, [items]);
 
   const addItem = () => {
     if (!input.trim()) return;
@@ -68,7 +89,7 @@ export default function ListaComprasPage() {
               Nenhum item ainda. Comece adicionando o que precisa comprar.
             </p>
           )}
-          {items.map((item) => (
+          {items.sort((a, b) => Number(a.done) - Number(b.done)).map((item) => (
             <div
               key={item.id}
               className="flex items-center justify-between border border-neutral-800 rounded-md px-3 py-2 bg-neutral-950"
