@@ -51,7 +51,7 @@ export default function JogosLoteriaPage() {
       </header>
 
       {/* Anúncio no topo do app */}
-      <Adsense slot="SEU_AD_SLOT_JOGOS" className="mb-4" />
+      {/* <Adsense slot="SEU_AD_SLOT_JOGOS" className="mb-4" /> */}
 
       <section className="border border-neutral-800 rounded-lg p-4 space-y-4 bg-neutral-950/60">
         <div className="grid sm:grid-cols-3 gap-4 text-sm">
@@ -128,7 +128,7 @@ export default function JogosLoteriaPage() {
       )}
 
       {/* Anúncio no rodapé do app */}
-      <Adsense slot="SEU_AD_SLOT_JOGOS_FOOTER" className="mt-4" />
+      {/* <Adsense slot="SEU_AD_SLOT_JOGOS_FOOTER" className="mt-4" /> */}
     </div>
   );
 }

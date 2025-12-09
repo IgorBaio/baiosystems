@@ -129,7 +129,7 @@ export default function ListaComprasPage() {
         </div>
       </section>
 
-      <Adsense slot="SEU_AD_SLOT_LISTA_FOOTER" className="mt-4" />
+      {/* <Adsense slot="SEU_AD_SLOT_LISTA_FOOTER" className="mt-4" /> */}
     </div>
   );
 }

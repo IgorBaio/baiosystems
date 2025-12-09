@@ -30,7 +30,7 @@ export default function ConsumoVeiculoPage() {
         </p>
       </header>
 
-      <Adsense slot="SEU_AD_SLOT_CONSUMO" className="mb-4" />
+      {/* <Adsense slot="SEU_AD_SLOT_CONSUMO" className="mb-4" /> */}
 
       <section className="border border-neutral-800 rounded-lg p-4 bg-neutral-950/60 space-y-4 text-sm">
         <div className="grid sm:grid-cols-3 gap-4">
@@ -72,7 +72,7 @@ export default function ConsumoVeiculoPage() {
         )}
       </section>
 
-      <Adsense slot="SEU_AD_SLOT_CONSUMO_FOOTER" className="mt-4" />
+      {/* <Adsense slot="SEU_AD_SLOT_CONSUMO_FOOTER" className="mt-4" /> */}
     </div>
   );
 }
