@@ -29,7 +29,7 @@ export const metadata = {
         <p>
           Em caso de dúvidas sobre esta política, entre em contato pelo e-mail:
           <span className="block text-emerald-400">
-            seu-email@baiosystems.com.br
+            igorbaiosoares@gmail.com
           </span>
         </p>
       </div>

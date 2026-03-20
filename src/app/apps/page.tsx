@@ -21,6 +21,16 @@ const apps = [
     name: "Consumo de Veículo",
     description: "Calcule o consumo médio do seu carro.",
   },
+  {
+    slug: "note-canvas",
+    name: "NoteCanvas",
+    description: "Editor visual de documentos em blocos com exportacao local e Google Drive.",
+  },
+  {
+    slug: "note-canvas-raw",
+    name: "NoteCanvas Raw",
+    description: "Editor Markdown bruto com preview, importacao e exportacao de .md.",
+  },
 ];
 
 export default function AppsPage() {
