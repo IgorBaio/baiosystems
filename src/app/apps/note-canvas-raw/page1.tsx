@@ -232,14 +232,11 @@ export default function NoteCanvasRawPage() {
           {children}
         </blockquote>
       ),
-      code: ({ inline, children }) =>
-        inline ? (
-          <code className="rounded bg-neutral-900 px-1.5 py-0.5 font-mono text-[0.9em] text-emerald-200">
-            {children}
-          </code>
-        ) : (
-          <code className="font-mono text-sm leading-6 text-emerald-200">{children}</code>
-        ),
+      code: ({ children }) => (
+        <code className="rounded bg-neutral-900 px-1.5 py-0.5 font-mono text-[0.9em] text-emerald-200">
+          {children}
+        </code>
+      ),
       pre: ({ children }) => (
         <pre className="my-5 overflow-x-auto rounded-2xl bg-neutral-900 p-4">{children}</pre>
       ),
