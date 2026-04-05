@@ -193,6 +193,16 @@ const markdownToHtml = (markdown: string) => {
 
     closeListsToDepth(html, listStack, 0);
 
+    if (/^####\s+/.test(trimmed)) {
+      closeBlockquote();
+      html.push(
+        `<h4 class="mt-6 text-xl font-semibold text-neutral-100">${parseInline(
+          trimmed.replace(/^####\s+/, ""),
+        )}</h4>`,
+      );
+      continue;
+    }
+
     if (/^###\s+/.test(trimmed)) {
       closeBlockquote();
       html.push(
