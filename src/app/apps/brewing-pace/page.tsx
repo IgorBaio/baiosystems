@@ -1057,7 +1057,8 @@ export default function BrewingPacePage() {
                   </div>
                 </div>
 
-                <div className="grid gap-3 md:grid-cols-2">
+                {/* <div className="grid gap-3 md:grid-cols-2"> */}
+                <div className="grid gap-3 md:grid-cols-1">
                   <button
                     type="button"
                     onClick={handleDrinkSave}
@@ -1066,14 +1067,14 @@ export default function BrewingPacePage() {
                     <Save className="h-4 w-4" />
                     Salvar bebida
                   </button>
-                  <button
+                  {/*<button
                     type="button"
                     onClick={handleSessionStart}
                     className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-neutral-950 transition hover:bg-emerald-400"
                   >
                     <Play className="h-4 w-4" />
                     {activeSession ? "Sessão em andamento" : "Iniciar sessão"}
-                  </button>
+                  </button>*/}
                 </div>
               </div>
             </div>
