@@ -2,6 +2,11 @@ import Link from "next/link";
 
 const apps = [
   {
+    slug: "brewing-pace",
+    name: "Brewing Pace",
+    description: "Rastreie sessões de bebida com cupace, splits e histórico local.",
+  },
+  {
     slug: "jogos-loteria",
     name: "Jogos de Loteria",
     description: "Gere jogos para diferentes modalidades de loteria.",

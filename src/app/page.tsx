@@ -170,6 +170,14 @@ const softSkills: LocalizedString[] = [
 
 const featuredApps = [
   {
+    title: { pt: "Brewing Pace", en: "Brewing Pace" },
+    description: {
+      pt: "Acompanhe sessões de bebida com cronômetro, cupace e histórico local.",
+      en: "Track drinking sessions with a timer, cupace, and local history.",
+    },
+    href: "/apps/brewing-pace",
+  },
+  {
     title: { pt: "Jogos de Loteria", en: "Lottery Games" },
     description: {
       pt: "Gere combinacoes de numeros para diferentes loterias.",
