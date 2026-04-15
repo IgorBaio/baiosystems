@@ -1,6 +1,6 @@
 "use client";
 
-import { toPng } from "html-to-image";
+import { toBlob, toPng } from "html-to-image";
 import type { LucideIcon } from "lucide-react";
 import {
   Activity,
@@ -316,6 +316,19 @@ const buildSessionSummaryText = (session: Session, metrics: SessionMetrics) =>
     }`,
     `Pico de ritmo: ${numberFormatter.format(metrics.peakCupsPerHour)} copos/h`,
   ].join("\n");
+
+const isMobileDevice = () => {
+  if (typeof navigator === "undefined" || typeof window === "undefined") {
+    return false;
+  }
+
+  const userAgent = navigator.userAgent.toLowerCase();
+  const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+  const mobileByUa =
+    /android|iphone|ipad|ipod|mobile|windows phone/.test(userAgent);
+
+  return mobileByUa || coarsePointer;
+};
 
 const sanitizeDrink = (value: unknown): Drink | null => {
   if (!value || typeof value !== "object") return null;
@@ -826,25 +839,66 @@ export default function BrewingPacePage() {
     }
 
     try {
+      const safeName = selectedSession.name
+        .toLowerCase()
+        .replace(/[^\w-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      const fileName = `${safeName || "brewing-pace-session"}.png`;
+      const mobileDevice = isMobileDevice();
+
+      if (mobileDevice && navigator.share) {
+        const blob = await toBlob(summarySnapshotRef.current, {
+          cacheBust: true,
+          pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+          backgroundColor: "#050816",
+        });
+
+        if (!blob) {
+          throw new Error("snapshot generation failed");
+        }
+
+        const imageFile = new File([blob], fileName, { type: "image/png" });
+
+        try {
+          await navigator.share({
+            title: `Brewing Pace · ${selectedSession.name}`,
+            text: "Imagem do resumo da sessão",
+            files: [imageFile],
+          });
+          setFeedback({
+            tone: "success",
+            message:
+              "Imagem enviada para o menu do sistema. Escolha Fotos/Galeria para guardar fora do app Arquivos.",
+          });
+          return;
+        } catch {
+          const url = window.URL.createObjectURL(blob);
+          window.open(url, "_blank", "noopener,noreferrer");
+          window.setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
+          setFeedback({
+            tone: "success",
+            message:
+              "Imagem aberta em nova aba. No celular, use salvar imagem ou compartilhar para Fotos/Galeria.",
+          });
+          return;
+        }
+      }
+
       const dataUrl = await toPng(summarySnapshotRef.current, {
         cacheBust: true,
         pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
         backgroundColor: "#050816",
       });
       const link = document.createElement("a");
-      const safeName = selectedSession.name
-        .toLowerCase()
-        .replace(/[^\w-]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-
       link.href = dataUrl;
-      link.download = `${safeName || "brewing-pace-session"}.png`;
+      link.download = fileName;
+      link.rel = "noopener";
       document.body.appendChild(link);
       link.click();
       link.remove();
       setFeedback({
         tone: "success",
-        message: "Resumo salvo como imagem.",
+        message: "Resumo baixado como imagem PNG.",
       });
     } catch {
       setFeedback({
